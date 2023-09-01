@@ -14,9 +14,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && jest --coverage",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:coverage": "jest --coverage"
   },
   "eslintConfig": {
     "extends": [
@@ -39,6 +40,16 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.2",
     "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.4.3"
+    "@testing-library/user-event": "^14.4.3",
+    "jest-environment-jsdom": "^29.6.4"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sass)$": "<rootDir>/src/tests/__mocks__/styleMock.js"
+    },
+    "testEnvironment": "jsdom"
   }
 }
