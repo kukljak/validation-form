@@ -65,3 +65,74 @@ With the above configuration, any push to the main branch will trigger the Sonar
 You can add SonarCloud badges to your README.md file to display the code quality metrics. You can find the markdown for badges in the SonarCloud dashboard under the "Badges" section.
 
 That's it! You have successfully integrated SonarCloud analysis into your GitHub repository using GitHub Actions.
+
+how to set node 20 to sonarcloud workflow -
+name: Build
+on:
+ push:
+   branches:
+     - main
+ pull_request:
+   types: [opened, synchronize, reopened]
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          node-version: 20
+      - name: Install dependencies
+        run: yarn
+      - name: Test and coverage
+        run: yarn jest --coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets. SONARCLOUD_TOKEN }}
+ChatGPT
+To set up a GitHub Actions workflow with Node.js 20 (which, as of my last update in September 2021, was not yet available, so you might be referring to a future release), you can use the following configuration in your .github/workflows/main.yml or any other workflow YAML file.
+
+Below is a sample workflow, slightly modified from your original configuration to explicitly specify Node.js version:
+
+yaml
+Copy code
+name: Build
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Test and coverage
+        run: yarn jest --coverage
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+Note the following:
+
+I added a step named "Setup Node.js" that uses the actions/setup-node@v2 action to explicitly specify the Node.js version.
+Removed the node-version: 20 from the actions/checkout@v2 step, as it was not relevant there.
+Please replace the yarn jest --coverage and other script sections according to your project's needs. Also, be sure that you have the secrets GITHUB_TOKEN and SONARCLOUD_TOKEN configured correctly in your GitHub repository settings under the "Secrets" section.
