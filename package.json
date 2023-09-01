@@ -46,7 +46,9 @@
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "src/**/*.js",
+      "!src/resource/**/*.{js,jsx}",
+      "!src/tests/**/*.{js,jsx}"
     ],
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "<rootDir>/src/tests/__mocks__/styleMock.js"
