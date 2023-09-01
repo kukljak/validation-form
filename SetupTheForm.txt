@@ -1,0 +1,331 @@
+User
+create a react form with inputs for next values - last_name, first_name, email and message
+add validation for them, in case use validator library
+create too, a submit button, which will record all inputs into the redux store by their own actions (setLastName, setFirstName, setEmail, setMessage)
+but submit button should work only when all inputs are valid, if one will be invalid - disable the submit button
+ChatGPT
+Certainly! Below is an example code snippet that demonstrates how you can achieve this using React, Redux, and the validator library. The code includes:
+
+A React component for the form with validation logic
+Redux actions to store form values
+A Redux reducer to handle the form state
+First, make sure to install the necessary packages if you haven't:
+
+bash
+Copy code
+npm install react-redux @reduxjs/toolkit validator
+Here's the code:
+
+jsx
+Copy code
+// rootReducer.js
+import { combineReducers } from 'redux';
+import formReducer from './formReducer';
+
+export default combineReducers({
+  form: formReducer,
+});
+
+// formReducer.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const formSlice = createSlice({
+  name: 'form',
+  initialState: {
+    lastName: '',
+    firstName: '',
+    email: '',
+    message: '',
+  },
+  reducers: {
+    setLastName: (state, action) => {
+      state.lastName = action.payload;
+    },
+    setFirstName: (state, action) => {
+      state.firstName = action.payload;
+    },
+    setEmail: (state, action) => {
+      state.email = action.payload;
+    },
+    setMessage: (state, action) => {
+      state.message = action.payload;
+    },
+  },
+});
+
+export const { setLastName, setFirstName, setEmail, setMessage } = formSlice.actions;
+export default formSlice.reducer;
+
+// FormComponent.js
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLastName, setFirstName, setEmail, setMessage } from './formReducer';
+import validator from 'validator';
+
+const FormComponent = () => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    lastName: '',
+    firstName: '',
+    email: '',
+    message: '',
+  });
+
+  const [validity, setValidity] = useState({
+    lastName: true,
+    firstName: true,
+    email: true,
+    message: true,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // Validation logic
+    let isValid = true;
+    if (name === 'email') {
+      isValid = validator.isEmail(value);
+    } else {
+      isValid = value.trim() !== '';
+    }
+
+    setValidity({
+      ...validity,
+      [name]: isValid,
+    });
+
+    // Dispatch action to Redux store
+    switch (name) {
+      case 'lastName':
+        dispatch(setLastName(value));
+        break;
+      case 'firstName':
+        dispatch(setFirstName(value));
+        break;
+      case 'email':
+        dispatch(setEmail(value));
+        break;
+      case 'message':
+        dispatch(setMessage(value));
+        break;
+      default:
+        break;
+    }
+  };
+
+  const allValid = Object.values(validity).every((v) => v);
+
+  return (
+    <form>
+      <input
+        type="text"
+        name="lastName"
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        value={formData.firstName}
+        onChange={handleChange}
+      />
+      <input
+        type="text"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+      <textarea
+        name="message"
+        placeholder="Message"
+        value={formData.message}
+        onChange={handleChange}
+      ></textarea>
+      <button type="submit" disabled={!allValid}>
+        Submit
+      </button>
+    </form>
+  );
+};
+
+export default FormComponent;
+
+// App.js
+import React from 'react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from './rootReducer';
+import FormComponent from './FormComponent';
+
+const store = configureStore({
+  reducer: rootReducer,
+});
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <div className="App">
+        <FormComponent />
+      </div>
+    </Provider>
+  );
+};
+
+export default App;
+In this example, we've used the validator library to validate the email input. The validator.isEmail() method checks if the provided string is a valid email. For the lastName, firstName, and message, we're simply checking if they are not empty strings.
+
+The submit button will be enabled only if all the fields are valid. As soon as you type into each input field, their respective actions are dispatched to update the Redux store.
+
+
+
+
+User
+add some simple styles for these inputs that form will look much better
+ChatGPT
+Certainly! Adding CSS styles can help make the form visually appealing and more user-friendly. Here's how you can update your FormComponent.js and include some inline styles for the form elements.
+
+jsx
+Copy code
+// FormComponent.js
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLastName, setFirstName, setEmail, setMessage } from './formReducer';
+import validator from 'validator';
+
+const formStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '20px',
+  border: '1px solid #ccc',
+  borderRadius: '8px',
+  maxWidth: '400px',
+  margin: '0 auto',
+};
+
+const inputStyle = {
+  margin: '10px',
+  padding: '10px',
+  fontSize: '16px',
+  borderRadius: '4px',
+  border: '1px solid #ccc',
+  width: '100%',
+};
+
+const buttonStyle = {
+  padding: '10px 20px',
+  fontSize: '16px',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  backgroundColor: '#007bff',
+  color: 'white',
+};
+
+const FormComponent = () => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    lastName: '',
+    firstName: '',
+    email: '',
+    message: '',
+  });
+
+  const [validity, setValidity] = useState({
+    lastName: true,
+    firstName: true,
+    email: true,
+    message: true,
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // Validation logic
+    let isValid = true;
+    if (name === 'email') {
+      isValid = validator.isEmail(value);
+    } else {
+      isValid = value.trim() !== '';
+    }
+
+    setValidity({
+      ...validity,
+      [name]: isValid,
+    });
+
+    // Dispatch action to Redux store
+    switch (name) {
+      case 'lastName':
+        dispatch(setLastName(value));
+        break;
+      case 'firstName':
+        dispatch(setFirstName(value));
+        break;
+      case 'email':
+        dispatch(setEmail(value));
+        break;
+      case 'message':
+        dispatch(setMessage(value));
+        break;
+      default:
+        break;
+    }
+  };
+
+  const allValid = Object.values(validity).every((v) => v);
+
+  return (
+    <form style={formStyle}>
+      <input
+        style={inputStyle}
+        type="text"
+        name="lastName"
+        placeholder="Last Name"
+        value={formData.lastName}
+        onChange={handleChange}
+      />
+      <input
+        style={inputStyle}
+        type="text"
+        name="firstName"
+        placeholder="First Name"
+        value={formData.firstName}
+        onChange={handleChange}
+      />
+      <input
+        style={inputStyle}
+        type="text"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+      <textarea
+        style={inputStyle}
+        name="message"
+        placeholder="Message"
+        value={formData.message}
+        onChange={handleChange}
+      ></textarea>
+      <button style={buttonStyle} type="submit" disabled={!allValid}>
+        Submit
+      </button>
+    </form>
+  );
+};
+
+export default FormComponent;
+Here, I've added simple inline styles to give a cleaner look to your form. The formStyle gives the form itself some padding and a border, inputStyle styles the input fields, and buttonStyle styles the submit button.
+
+You can also extend these styles or move them to a separate CSS file based on your project's needs.
