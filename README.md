@@ -1,6 +1,17 @@
 # Getting Started
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and hosted in [GitHub](https://github.com/kukljak/validation-form).
+This is a simple React app with form, where user can write his name, thurname, email and message.
+If user will not fill all fields or fill incorrect email the button restrict to record written data to redux,
+but when user will fill correctly every field the button will be active for clicking and the data will record to redux.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Locally setup
+if you want to run this project locally on your computer you will need to follow next guide:
+
+1) Clone the repository - https://github.com/kukljak/validation-form.git
+2) You need to use version of nodejs >=20
+3) Run - npm install
+4) Run - npm start
+5) Enjoy a project in your browser :-)
 
 ## Available Scripts
 
